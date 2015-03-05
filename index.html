@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Heatmaps</title>
+        <link rel="stylesheet" type="text/css" href="styles/style.css">
+        <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=visualization"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script>
+            var map, pointArray, heatmap;
+            var pa_counter = 0;
+            var all_frames = [];
+            var toggling;
+            var milliseconds_between_animations = 500;
+
+            function heatmapDataReady(data, status){
+                
+                var latlng = data.split("\n");
+                var taxiData1 = [];
+                var taxiData2 = [];
+                var taxiData3 = [];
+                var taxiData4 = [];
+                var taxiData5 = [];
+                var multiplier = 0.001;
+                
+                for(i = 1; i < latlng.length; i++){
+                    var split_lat_lng = latlng[i].split(",");
+                    var lat = parseFloat(split_lat_lng[0]);
+                    var lng = parseFloat(split_lat_lng[1]);
+                    taxiData1.push(new google.maps.LatLng(lat + 0 * multiplier, lng + 0 * multiplier));
+                    taxiData2.push(new google.maps.LatLng(lat + 1 * multiplier, lng + 1 * multiplier));
+                    taxiData3.push(new google.maps.LatLng(lat + 2 * multiplier, lng + 2 * multiplier));
+                    taxiData4.push(new google.maps.LatLng(lat + 3 * multiplier, lng + 3 * multiplier));
+                    taxiData5.push(new google.maps.LatLng(lat + 4 * multiplier, lng + 4 * multiplier));
+                }
+                
+                all_frames.push(taxiData1);
+                all_frames.push(taxiData2);
+                all_frames.push(taxiData3);
+                all_frames.push(taxiData4);
+                all_frames.push(taxiData5);
+
+                pointArray = new google.maps.MVCArray(taxiData1.slice(0));
+                heatmap = new google.maps.visualization.HeatmapLayer({data: pointArray});
+                heatmap.setMap(map);
+            }
+            
+            function initialize() {
+                var mapOptions = {
+                    zoom: 13,
+                    center: new google.maps.LatLng(37.774546, -122.433523),
+                    mapTypeId: google.maps.MapTypeId.ROAD
+                };
+
+                map = new google.maps.Map(document.getElementById('map-canvas'),
+                                          mapOptions);
+                
+                $.get("data/heatmapData.csv", heatmapDataReady)
+            }
+
+            function toggleHeatmapAnimation() {
+                if(toggling == null){
+                    toggling = setInterval(function (){
+                        pa_counter += 1;
+                        if(pa_counter >= all_frames.length){pa_counter = 0;}
+                        pointArray.clear();
+                        for(i = 0; i < all_frames[pa_counter].length; i++){
+                            pointArray.push(all_frames[pa_counter][i]);
+                        }
+                        
+                        $("input[name=slider]")[0].value = pa_counter;
+                        
+                    }, milliseconds_between_animations);
+                }
+                else{
+                    clearInterval(toggling);
+                    toggling = null;
+                }
+            }
+
+            function changeGradient() {
+                var gradient = [
+                    'rgba(0, 255, 255, 0)',
+                    'rgba(0, 255, 255, 1)',
+                    'rgba(0, 191, 255, 1)',
+                    'rgba(0, 127, 255, 1)',
+                    'rgba(0, 63, 255, 1)',
+                    'rgba(0, 0, 255, 1)',
+                    'rgba(0, 0, 223, 1)',
+                    'rgba(0, 0, 191, 1)',
+                    'rgba(0, 0, 159, 1)',
+                    'rgba(0, 0, 127, 1)',
+                    'rgba(63, 0, 91, 1)',
+                    'rgba(127, 0, 63, 1)',
+                    'rgba(191, 0, 31, 1)',
+                    'rgba(255, 0, 0, 1)'];
+                
+                heatmap.set('gradient', heatmap.get('gradient') ? null : gradient); 
+            }
+
+            function changeRadius() {
+                heatmap.set('radius', heatmap.get('radius') ? null : 20);
+            }
+
+            function changeOpacity() {
+                heatmap.set('opacity', heatmap.get('opacity') ? null : 0.2);    
+            }
+            
+            function sliderChanged(value){
+                if(toggling != null){
+                    toggleHeatmapAnimation();
+                }
+                pa_counter = parseInt(value);
+                pointArray.clear();
+                for(i = 0; i < all_frames[pa_counter].length; i++){
+                    pointArray.push(all_frames[pa_counter][i]);
+                }
+            }
+
+            google.maps.event.addDomListener(window, 'load', initialize);
+
+        </script>
+    </head>
+
+    <body>
+        <div class="panel" id="button-panel">
+        <button onclick="toggleHeatmapAnimation()">Toggle Heatmap Animation</button>
+        <button onclick="changeGradient()">Change gradient</button>
+        <button onclick="changeRadius()">Change radius</button>
+        <button onclick="changeOpacity()">Change opacity</button>
+        </div>
+        <div id="map-canvas"></div>
+        <div class="panel" id="slider-panel">
+            <span>Heatmap Animation Slider</span>
+            <br>            
+            <input type="range" name="slider" min="0" max="4" value="0" oninput="sliderChanged(value)"/>
+        </div>        
+    </body>
+</html>

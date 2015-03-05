@@ -1,0 +1,28 @@
+html, body, #map-canvas {
+    height: 100%;
+    margin: 0px;
+    padding: 0px
+}
+
+.panel {
+    position: absolute;    
+    z-index: 5;
+    background-color: #fff;
+    padding: 5px;
+    border: 1px solid #999;
+}
+
+#button-panel {
+    top: 5px;
+    left: 50%;
+    margin-left: -180px;
+}
+
+#slider-panel {
+    bottom: 3%;
+    left: 50%;
+}
+
+input[name=slider]{
+    width: 100%;
+}
