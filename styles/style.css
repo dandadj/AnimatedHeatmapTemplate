@@ -23,6 +23,11 @@ html, body, #map-canvas {
     left: 50%;
 }
 
+#frameLabel{
+    display: table;
+    margin: 0 auto;
+}
+
 input[name=slider]{
     width: 100%;
 }
