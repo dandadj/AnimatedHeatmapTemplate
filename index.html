@@ -12,7 +12,7 @@
             var data_chunks = 5;
             var all_frames = [];
             var toggling;
-            var milliseconds_between_animations = 100;
+            var milliseconds_between_animations = 750;
 
             function heatmapDataReady(data, status){                
                 var latlng = data.split("\n");
@@ -38,8 +38,8 @@
             
             function initialize() {
                 var mapOptions = {
-                    zoom: 13,
-                    center: new google.maps.LatLng(37.774546, -122.433523),
+                    zoom: 10,
+                    center: new google.maps.LatLng(41.83385, -87.68155),
                     mapTypeId: google.maps.MapTypeId.ROAD
                 };
 
