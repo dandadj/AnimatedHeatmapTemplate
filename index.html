@@ -11,6 +11,7 @@
             var pa_counter = 0;
             var data_chunks = 5;
             var all_frames = [];
+            var frame_labels = [];
             var toggling;
             var milliseconds_between_animations = 750;
 
@@ -27,13 +28,15 @@
                     var lng = parseFloat(split_lat_lng[3]);
                     if(isNaN(lat) || isNaN(lng)){continue;}
                     all_frames[chunk_counter].push(new google.maps.LatLng(lat, lng));
+                    frame_labels.push("Frame: " + i);
                     chunk_counter = chunk_counter + 1;
                     if(chunk_counter >= data_chunks){chunk_counter = 0;}
                 }
 
+                $("#frameLabel").text(frame_labels[0]);
                 pointArray = new google.maps.MVCArray(all_frames[0].slice(0));
                 heatmap = new google.maps.visualization.HeatmapLayer({data: pointArray});
-                heatmap.setMap(map);
+                heatmap.setMap(map);                
             }
             
             function initialize() {
@@ -61,6 +64,7 @@
                         }
                         
                         $("input[name=slider]")[0].value = pa_counter;
+                        $("#frameLabel").text(frame_labels[pa_counter]);
                         
                     }, milliseconds_between_animations);
                 }
@@ -107,6 +111,7 @@
                 for(i = 0; i < all_frames[pa_counter].length; i++){
                     pointArray.push(all_frames[pa_counter][i]);
                 }
+                $("#frameLabel").text(frame_labels[pa_counter]);
             }
 
             google.maps.event.addDomListener(window, 'load', initialize);
@@ -126,6 +131,8 @@
             <span>Heatmap Animation Slider</span>
             <br>            
             <input type="range" name="slider" min="0" max="4" value="0" oninput="sliderChanged(value)"/>
+            <br>
+            <span id="frameLabel"></span>
         </div>        
     </body>
 </html>
