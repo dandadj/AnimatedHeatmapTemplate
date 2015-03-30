@@ -11,15 +11,16 @@
             google.maps.event.addDomListener(window, 'load', function(){
                 
                 $.ajax({
-                      url:'/DataHelper.php',
+                      url:'/AnimatedHeatmapTemplate/DataHelper.php',
                       data:{param:"test param"},
                       type:'GET',
                       success: function (response) {
-                          alert(response);
+                          points = JSON.parse(response);
+                          alert(points[0]["Rating"]);
                       },
-                      error: function () {
-                          alert('Bummer: there was an error!');
-                      }
+                      error: function(xhr, status, error) {
+                          alert(xhr.responseText);
+                        }
                   });
                 
 //                $.get("data/CrimesMarch.csv", function(data, status){

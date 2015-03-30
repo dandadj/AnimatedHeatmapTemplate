@@ -1,34 +1,30 @@
 <?php
-    require mysql;
-    $servername = "yanen.li";
-    $username = "wang296";
-    $password = "Whn1984523";
-    $dbname = "HotelReviews";
+$servername = "yanen.li";
+$username = "wang296";
+$password = "Whn1984523";
+$dbname = "HotelReviews";
 
-    // Connecting, selecting database
-    $link = mysql_connect($servername, $username, $password)
-        or die('Could not connect: ' . mysql_error());
-    echo 'Connected successfully';
-    mysql_select_db($dbname) or die('Could not select database');
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+} 
 
-    // Performing SQL query
-    $query = 'SELECT * FROM HotelsNew limit 10';
-    $result = mysql_query($query) or die('Query failed: ' . mysql_error());
+$sql = "select * from HotelReviews.HotelsNew where latitude <> 0 and longitude <> 0 and Address like '%New York%';";
 
-    // Printing results in HTML
-    echo "<table>\n";
-    while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
-        echo "\t<tr>\n";
-        foreach ($line as $col_value) {
-            echo "\t\t<td>$col_value</td>\n";
-        }
-        echo "\t</tr>\n";
+$result = $conn->query($sql);
+
+$json_response = array();
+
+if ($result->num_rows > 0) {
+    // output data of each row
+    while($row = $result->fetch_assoc()) {
+        $json_response[] = array("Rating"=>$row["Rating"], "latitude"=>$row["latitude"], "longitude"=>$row["longitude"]);
     }
-    echo "</table>\n";
-
-    // Free resultset
-    mysql_free_result($result);
-
-    // Closing connection
-    mysql_close($link);
+} else {
+    echo "0 results";
+}
+echo json_encode($json_response);
+$conn->close();
 ?>
