@@ -12,11 +12,13 @@ function InitializeAnimatedHeatmap(all_frames, frame_labels, millisecondsBetween
             toggling = setInterval(function (){
                 pa_counter += 1;
                 if(pa_counter >= all_frames.length){pa_counter = 0;}
-                pointArray.clear();
+                pointArray = [];
                 for(i = 0; i < all_frames[pa_counter].length; i++){
-                    pointArray.push(all_frames[pa_counter][i]);
+                    //pointArray.push(all_frames[pa_counter][i]);
+                    pointArray.push({location: new google.maps.LatLng(all_frames[pa_counter][i]["location"]["k"] + 0.01, all_frames[pa_counter][i]["location"]["D"] + 0.01), weight: all_frames[pa_counter][i]["weight"]});
                 }
-
+                heatmap.setData(pointArray);
+                
                 $("input[name=slider]")[0].value = pa_counter;
                 $("#frameLabel").text(frame_labels[pa_counter]);
 
@@ -52,10 +54,11 @@ function InitializeAnimatedHeatmap(all_frames, frame_labels, millisecondsBetween
             toggleHeatmapAnimation();
         }
         pa_counter = parseInt(value);
-        pointArray.clear();
+        pointArray = [];
         for(i = 0; i < all_frames[pa_counter].length; i++){
             pointArray.push(all_frames[pa_counter][i]);
         }
+        heatmap.setData(pointArray);
         $("#frameLabel").text(frame_labels[pa_counter]);
     }
     
@@ -69,14 +72,15 @@ function InitializeAnimatedHeatmap(all_frames, frame_labels, millisecondsBetween
                               mapOptions);
 
     $("#frameLabel").text(frame_labels[0]);
-    pointArray = new google.maps.MVCArray(all_frames[0].slice(0));
+    pointArray = all_frames[0].slice(0);
+    
     heatmap = new google.maps.visualization.HeatmapLayer({data: pointArray});
     heatmap.setMap(map);
     
     var bounds = new google.maps.LatLngBounds();
     for(i = 0; i < all_frames.length; i++){
         for(j = 0; j < all_frames[i].length; j++){
-            bounds.extend(all_frames[i][j]);
+            bounds.extend(all_frames[i][j]["location"]);
         }
     }
     
