@@ -1,7 +1,7 @@
 
 function InitializeAnimatedHeatmap(all_frames, frame_labels, millisecondsBetweenAnimations, heatmapID, 
                                     toggleMapButtonID, changeGradientButtonID, 
-                                    changeRadiusButtonID, changeOpacityButtonID, sliderID){
+                                    changeRadiusButtonID, changeOpacityButtonID, sliderID) {
     var map, pointArray, heatmap;
     var pa_counter = 0;
     var data_chunks = all_frames.length;
