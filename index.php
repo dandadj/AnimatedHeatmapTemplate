@@ -12,8 +12,8 @@
                 
                 $.ajax({
                       //url:'/DataHelper.php',
-                      url:'/ReadCSV.php',
-                      data:{param:"test param"},
+                      url:'QueryWithCache.php',
+                      data:{query:" New  York   "},
                       type:'GET',
                       success: function (response) {
                           points = JSON.parse(response);
