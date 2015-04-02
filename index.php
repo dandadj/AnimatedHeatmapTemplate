@@ -7,6 +7,8 @@
         <script src="AnimatedHeatmap.js" type="text/javascript"></script>
         <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=visualization"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
         <script>
             google.maps.event.addDomListener(window, 'load', function(){
                 
@@ -16,35 +18,31 @@
                       data:{query:" New  York   "},
                       type:'GET',
                       success: function (response) {
-                          points = JSON.parse(response);
+                          var points = JSON.parse(response);
+                          var quarters = $.map(points, function(p){return p["Date"]});
+                          var unique_dates = $.unique(quarters);
+                          var min_slider = unique_dates.length - 1;                          
+                          document.getElementById("map1-slider").max = min_slider;
+                          
                           var all_frames = [];
                           var frame_labels = [];
-                          var data_chunks = 10;
-                          for(i = 0; i < data_chunks; i++){
+                          for(i in unique_dates){
                               all_frames.push([]);
-                              frame_labels.push("Frame: " + i);
-                          }
-
-                          //var bounds = new google.maps.LatLngBounds();
-                          var chunk_counter = 0;
-                          //for(i = 0; i < points.length; i++){                              
-                          for(i = 1; i < points.length; i++){                              
-                              //var lat = points[i]["latitude"];
-                              //var lng = points[i]["longitude"];
-                              var lat = points[i][2];
-                              var lng = points[i][3];
-                              if(isNaN(lat) || isNaN(lng)){continue;}
-                              var lat_lng = new google.maps.LatLng(lat, lng);
-                              //all_frames[chunk_counter].push({location: lat_lng, weight: Number(points[i]["Rating"])});
-                              all_frames[chunk_counter].push({location: lat_lng, weight: Number(points[i][5])});
+                              frame_labels.push(unique_dates[i]);
                               
-                              chunk_counter = chunk_counter + 1;
-                              if(chunk_counter >= data_chunks){chunk_counter = 0;}
+                              var points_in_range = points.filter(function(row){
+                                  return row["Date"] == unique_dates[i];
+                              });
+                              
+                              for(point of points_in_range){
+                                  var lat = point["latitude"];
+                                  var lng = point["longitude"];
+                                  if(isNaN(lat) || isNaN(lng)){continue;}
+                                  var lat_lng = new google.maps.LatLng(lat, lng);
+                                  all_frames[i].push({location: lat_lng, weight: Number(point["Overall"])});                                  
+                              }
                           }
-
-                            //map.setCenter(bounds.getCenter());
-                            //map.fitBounds(bounds);
-
+                          
                           $("#frameLabel").text(frame_labels[0]);
                           //pointArray = new google.maps.MVCArray(all_frames[0].slice(0));
                           //heatmap = new google.maps.visualization.HeatmapLayer({data: pointArray});
@@ -76,7 +74,7 @@
         <div class="panel" id="slider-panel">
             <span>Heatmap Animation Slider</span>
             <br>            
-            <input id="map1-slider" type="range" name="slider" min="0" max="9" value="0"/>
+            <input id="map1-slider" type="range" name="slider" min="0" max="0" value="0"/>
             <br>
             <span id="frameLabel"></span>
         </div>        
