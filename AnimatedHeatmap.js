@@ -13,11 +13,14 @@ function InitializeAnimatedHeatmap(all_frames, frame_labels, millisecondsBetween
                 pa_counter += 1;
                 if(pa_counter >= all_frames.length){pa_counter = 0;}
                 pointArray = [];
+                var avg = 0;
                 for(i = 0; i < all_frames[pa_counter].length; i++){
-                    //pointArray.push(all_frames[pa_counter][i]);
-                    pointArray.push({location: new google.maps.LatLng(all_frames[pa_counter][i]["location"]["k"] + 0.01, all_frames[pa_counter][i]["location"]["D"] + 0.01), weight: all_frames[pa_counter][i]["weight"]});
+                    pointArray.push(all_frames[pa_counter][i]);
+                    avg = avg + all_frames[pa_counter][i]['weight'];
                 }
                 heatmap.setData(pointArray);
+                
+                console.log(avg / all_frames[pa_counter].length);
                 
                 $("input[name=slider]")[0].value = pa_counter;
                 $("#frameLabel").text(frame_labels[pa_counter]);

@@ -15,7 +15,7 @@
                 $.ajax({
                       //url:'/DataHelper.php',
                       url:'QueryWithCache.php',
-                      data:{query:" New  York   "},
+                      data:{query:"new york"},
                       type:'GET',
                       success: function (response) {
                           var points = JSON.parse(response);
@@ -44,9 +44,6 @@
                           }
                           
                           $("#frameLabel").text(frame_labels[0]);
-                          //pointArray = new google.maps.MVCArray(all_frames[0].slice(0));
-                          //heatmap = new google.maps.visualization.HeatmapLayer({data: pointArray});
-                          //heatmap.setMap(map);   
                           InitializeAnimatedHeatmap(all_frames, frame_labels, 500, "#map-canvas", "#map1-toggle-button", 
                                                     "#map1-change-gradiant-button", "#map1-change-radius-button", 
                                                       "#map1-change-opacity-button", "#map1-slider");
@@ -54,11 +51,7 @@
                       error: function(xhr, status, error) {
                           alert(xhr.responseText);
                       }
-                  });
-                
-//                $.get("data/CrimesMarch.csv", function(data, status){
-
-//                });
+                  });                
             });
         </script>        
     </head>
