@@ -47,7 +47,10 @@
                            date('Y-m-d', strtotime("01/01/2011")),
                            date('Y-m-d', strtotime("04/01/2011")),
                            date('Y-m-d', strtotime("07/01/2011")),
-                           date('Y-m-d', strtotime("10/01/2011"))];
+                           date('Y-m-d', strtotime("10/01/2011")),
+                           date('Y-m-d', strtotime("01/01/2012")),
+                           date('Y-m-d', strtotime("04/01/2012")),
+                           date('Y-m-d', strtotime("07/01/2012"))];
         
         $json_response = array();
         if ($result->num_rows > 0) {

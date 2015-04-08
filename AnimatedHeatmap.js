@@ -12,16 +12,10 @@ function InitializeAnimatedHeatmap(all_frames, frame_labels, millisecondsBetween
             toggling = setInterval(function (){
                 pa_counter += 1;
                 if(pa_counter >= all_frames.length){pa_counter = 0;}
-                pointArray = [];
-                var avg = 0;
-                for(i = 0; i < all_frames[pa_counter].length; i++){
-                    pointArray.push(all_frames[pa_counter][i]);
-                    avg = avg + all_frames[pa_counter][i]['weight'];
-                }
+                pointArray = [];        
+                pointArray = all_frames[pa_counter];
                 heatmap.setData(pointArray);
-                
-                console.log(avg / all_frames[pa_counter].length);
-                
+                                
                 $("input[name=slider]")[0].value = pa_counter;
                 $("#frameLabel").text(frame_labels[pa_counter]);
 
@@ -56,11 +50,14 @@ function InitializeAnimatedHeatmap(all_frames, frame_labels, millisecondsBetween
         if(toggling != null){
             toggleHeatmapAnimation();
         }
-        pa_counter = parseInt(value);
-        pointArray = [];
-        for(i = 0; i < all_frames[pa_counter].length; i++){
-            pointArray.push(all_frames[pa_counter][i]);
-        }
+        
+        temp_slider_val = parseInt(value);
+        // If the slider value is the same as before, exit
+        if(temp_slider_val == pa_counter){return;}
+        
+        pa_counter = temp_slider_val;
+        pointArray = [];        
+        pointArray = all_frames[pa_counter];
         heatmap.setData(pointArray);
         $("#frameLabel").text(frame_labels[pa_counter]);
     }
@@ -79,6 +76,7 @@ function InitializeAnimatedHeatmap(all_frames, frame_labels, millisecondsBetween
     
     heatmap = new google.maps.visualization.HeatmapLayer({data: pointArray});
     heatmap.setMap(map);
+    heatmap.set('maxIntensity', 5); 
     
     var bounds = new google.maps.LatLngBounds();
     for(i = 0; i < all_frames.length; i++){
@@ -96,6 +94,7 @@ function InitializeAnimatedHeatmap(all_frames, frame_labels, millisecondsBetween
     $(changeRadiusButtonID).click(function(){changeRadius();});
     $(changeOpacityButtonID).click(function(){changeOpacity();});
     $(sliderID).on("change mousemove", function(){sliderChanged($(this).val());});
+    //$(sliderID).on("change", function(){sliderChanged($(this).val());});
 }
 
 

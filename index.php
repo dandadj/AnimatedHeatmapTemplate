@@ -10,8 +10,13 @@
         <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
         <script>
-            google.maps.event.addDomListener(window, 'load', function(){
+            
+            function SearchForLocation(){                
+                var search_location = $("#SearchLocation")[0].value;
                 
+            }
+            
+            google.maps.event.addDomListener(window, 'load', function(){                
                 $.ajax({
                       //url:'/DataHelper.php',
                       url:'QueryWithCache.php',
@@ -58,10 +63,14 @@
 
     <body>
         <div class="panel" id="button-panel">
-        <button id="map1-toggle-button">Toggle Heatmap Animation</button>
-        <button id="map1-change-gradiant-button">Change gradient</button>
-        <button id="map1-change-radius-button">Change radius</button>
-        <button id="map1-change-opacity-button">Change opacity</button>
+            <button id="map1-toggle-button">Toggle Heatmap Animation</button>
+            <button id="map1-change-gradiant-button">Change gradient</button>
+            <button id="map1-change-radius-button">Change radius</button>
+            <button id="map1-change-opacity-button">Change opacity</button>
+            <br>
+            Enter search location: <input type="text" id="SearchLocation" name="searchLocation" value="New York">
+            <input type="submit" value="Search" onclick="SearchForLocation()">
+            
         </div>
         <div id="map-canvas"></div>
         <div class="panel" id="slider-panel">
