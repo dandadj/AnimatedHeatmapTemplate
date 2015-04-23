@@ -13,14 +13,29 @@
             
             function SearchForLocation(){                
                 var search_location = $("#SearchLocation")[0].value;
-                
+                QueryDB(search_location);
             }
             
-            google.maps.event.addDomListener(window, 'load', function(){                
+            function GetHotelInfo(hotelIDs){
                 $.ajax({
-                      //url:'/DataHelper.php',
+                      url:'HotelInfo.php',
+                      data:{hotelids:hotelIDs},
+                      type:'GET',
+                      success: function (response) {
+                          var hotel_infos = JSON.parse(response);
+                          alert(hotel_infos.length);
+                          
+                      },
+                      error: function(xhr, status, error) {
+                          alert(xhr.responseText);
+                      }
+                  });
+            }
+            
+            function QueryDB(location){
+                $.ajax({
                       url:'QueryWithCache.php',
-                      data:{query:"new york"},
+                      data:{query:location},
                       type:'GET',
                       success: function (response) {
                           var points = JSON.parse(response);
@@ -56,7 +71,12 @@
                       error: function(xhr, status, error) {
                           alert(xhr.responseText);
                       }
-                  });                
+                  });
+            }
+            
+            google.maps.event.addDomListener(window, 'load', function(){
+                QueryDB("new york");
+                
             });
         </script>        
     </head>

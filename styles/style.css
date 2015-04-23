@@ -1,7 +1,6 @@
 html, body, #map-canvas {
-    height: 100%;
-    margin: 0px;
-    padding: 0px
+    height: 400px;
+    width: 800px
 }
 
 .panel {
