@@ -1,7 +1,6 @@
 html, body, #map-canvas {
-    height: 100%;
-    margin: 0px;
-    padding: 0px
+    height: 800px;
+    width: 800px
 }
 
 .panel {
@@ -13,14 +12,14 @@ html, body, #map-canvas {
 }
 
 #button-panel {
-    top: 5px;
-    left: 50%;
-    margin-left: -180px;
+    top: 10px;
+    left: 175px;
+    
 }
 
 #slider-panel {
-    bottom: 3%;
-    left: 50%;
+    top: 700px;
+    left: 300px;
 }
 
 #frameLabel{
@@ -30,4 +29,15 @@ html, body, #map-canvas {
 
 input[name=slider]{
     width: 100%;
+}
+
+#frameLabel {
+    display: table;
+    margin: 0 auto;
+}
+
+#speedSelection {
+    margin-left: auto;
+    margin-right: auto;
+    width: 60%;
 }
