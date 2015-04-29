@@ -64,9 +64,10 @@
                           }
                           
                           $("#frameLabel").text(frame_labels[0]);
-                          InitializeAnimatedHeatmap(all_frames, frame_labels, 500, "#map-canvas", "#map1-toggle-button", 
-                                                    "#map1-change-gradiant-button", "#map1-change-radius-button", 
-                                                      "#map1-change-opacity-button", "#map1-slider");
+                          InitializeAnimatedHeatmap(all_frames, frame_labels, 500, "#map-canvas", "#map1-loop-button", 
+                                                    "#map1-play-button", "#map1-change-gradiant-button", 
+                                                    "#map1-change-radius-button", "#map1-change-opacity-button", "#map1-slider",
+                                                    "#speedSelection");
                           },
                       error: function(xhr, status, error) {
                           alert(xhr.responseText);
@@ -75,21 +76,20 @@
             }
             
             google.maps.event.addDomListener(window, 'load', function(){
-                QueryDB("new york");
+                QueryDB("Chicago");
                 
             });
         </script>        
     </head>
 
     <body>
-        <div class="panel" id="button-panel">
-            <button id="map1-toggle-button">Toggle Heatmap Animation</button>
+        <div class="panel" id="button-panel">            
             <button id="map1-change-gradiant-button">Change gradient</button>
             <button id="map1-change-radius-button">Change radius</button>
             <button id="map1-change-opacity-button">Change opacity</button>
             <br>
-            Enter search location: <input type="text" id="SearchLocation" name="searchLocation" value="New York">
-            <input type="submit" value="Search" onclick="SearchForLocation()">
+            Enter search location: <input type="text" id="SearchLocation" name="searchLocation" value="Chicago" onkeydown="if (event.keyCode == 13) document.getElementById('locationSearch').click()">
+            <input id="locationSearch" type="submit" value="Search" onclick="SearchForLocation()">
             
         </div>
         <div id="map-canvas"></div>
@@ -99,6 +99,14 @@
             <input id="map1-slider" type="range" name="slider" min="0" max="0" value="0"/>
             <br>
             <span id="frameLabel"></span>
+            <div id="speedSelection">
+                <input type="radio" name="speed" value="slow">Slow
+                <input type="radio" name="speed" value="medium" checked>Medium
+                <input type="radio" name="speed" value="fast">Fast
+            </div>
+            <br>
+            <button id="map1-loop-button">Loop Heatmap Animation</button>
+            <button id="map1-play-button">Play Heatmap Animation</button>
         </div>        
     </body>
 </html>

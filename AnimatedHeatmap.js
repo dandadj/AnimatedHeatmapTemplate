@@ -1,13 +1,18 @@
 
 function InitializeAnimatedHeatmap(all_frames, frame_labels, millisecondsBetweenAnimations, heatmapID, 
-                                    toggleMapButtonID, changeGradientButtonID, 
-                                    changeRadiusButtonID, changeOpacityButtonID, sliderID) {
+                                    loopMapButtonID, playMapButtonID, changeGradientButtonID, 
+                                    changeRadiusButtonID, changeOpacityButtonID, sliderID,
+                                    speedSelectDivID) {
     var map, pointArray, heatmap;
     var pa_counter = 0;
     var data_chunks = all_frames.length;
     var toggling;
+    var slow_speed = millisecondsBetweenAnimations * 4;
+    var medium_speed = millisecondsBetweenAnimations;
+    var fast_speed = millisecondsBetweenAnimations / 4;
+    var current_speed = medium_speed;
     
-    function toggleHeatmapAnimation() {
+    function loopHeatmapAnimation() {
         if(toggling == null){
             toggling = setInterval(function (){
                 pa_counter += 1;
@@ -19,12 +24,37 @@ function InitializeAnimatedHeatmap(all_frames, frame_labels, millisecondsBetween
                 $("input[name=slider]")[0].value = pa_counter;
                 $("#frameLabel").text(frame_labels[pa_counter]);
 
-            }, millisecondsBetweenAnimations);
+            }, current_speed);
         }
         else{
             clearInterval(toggling);
             toggling = null;
         }
+    }
+    
+    function playHeatmapAnimation() {
+        clearInterval(toggling);
+        toggling = null;
+        pa_counter = 0;
+        pointArray = all_frames[pa_counter];
+        heatmap.setData(pointArray);
+        toggling = setInterval(function (){
+            pa_counter += 1;
+            if(pa_counter >= all_frames.length){
+                pa_counter -= 1;
+                clearInterval(toggling);
+                toggling = null;
+                return;
+            }
+            pointArray = [];        
+            pointArray = all_frames[pa_counter];
+            heatmap.setData(pointArray);
+
+            $("input[name=slider]")[0].value = pa_counter;
+            $("#frameLabel").text(frame_labels[pa_counter]);
+
+        }, current_speed);
+                
     }
     
     function changeGradient() {
@@ -47,19 +77,36 @@ function InitializeAnimatedHeatmap(all_frames, frame_labels, millisecondsBetween
     }
 
     function sliderChanged(value){
+        // If the slider value is the same as before, exit
+        temp_slider_val = parseInt(value);        
+        if(temp_slider_val == pa_counter){return;}
         if(toggling != null){
-            toggleHeatmapAnimation();
+            loopHeatmapAnimation();
         }
         
-        temp_slider_val = parseInt(value);
-        // If the slider value is the same as before, exit
-        if(temp_slider_val == pa_counter){return;}
+        
         
         pa_counter = temp_slider_val;
         pointArray = [];        
         pointArray = all_frames[pa_counter];
         heatmap.setData(pointArray);
         $("#frameLabel").text(frame_labels[pa_counter]);
+    }
+    
+    function changeSpeed(value){
+        switch(value){
+            case "slow":
+                current_speed = slow_speed;
+                break;
+            case "medium":
+                current_speed = medium_speed;
+                break;
+            case "fast":
+                current_speed = fast_speed;
+                break;
+            default:
+                current_speed = medium_speed;
+        }
     }
     
     var mapOptions = {
@@ -89,12 +136,19 @@ function InitializeAnimatedHeatmap(all_frames, frame_labels, millisecondsBetween
     map.fitBounds(bounds);
     
     //Setup click events
-    $(toggleMapButtonID).click(function(){toggleHeatmapAnimation();});
+    $(loopMapButtonID).click(function(){loopHeatmapAnimation();});
+    $(playMapButtonID).click(function(){playHeatmapAnimation();});
     $(changeGradientButtonID).click(function(){changeGradient();});
     $(changeRadiusButtonID).click(function(){changeRadius();});
     $(changeOpacityButtonID).click(function(){changeOpacity();});
     $(sliderID).on("change mousemove", function(){sliderChanged($(this).val());});
     //$(sliderID).on("change", function(){sliderChanged($(this).val());});
+    
+    $(speedSelectDivID).children("input").each(function(){
+        $(this).change(function(){changeSpeed($(this).val());});
+    });
+    
+    
 }
 
 
