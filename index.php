@@ -13,17 +13,17 @@
             
             function SearchForLocation(){                
                 var search_location = $("#SearchLocation")[0].value;
+                doAlert("testing alert");
                 QueryDB(search_location);
             }
             
-            function GetHotelInfo(hotelIDs){
+            function GetHotelInfo(){
                 $.ajax({
                       url:'HotelInfo.php',
-                      data:{hotelids:hotelIDs},
                       type:'GET',
                       success: function (response) {
                           var hotel_infos = JSON.parse(response);
-                          alert(hotel_infos.length);
+                          
                           
                       },
                       error: function(xhr, status, error) {
@@ -41,6 +41,10 @@
                           var points = JSON.parse(response);
                           var quarters = $.map(points, function(p){return p["Date"]});
                           var unique_dates = $.unique(quarters);
+                          
+                          var query_hotel_ids = $.map(points, function(p){return p["HotelID"]});
+                          var unique_hotel_ids = $.unique(query_hotel_ids);
+                          
                           var min_slider = unique_dates.length - 1;                          
                           document.getElementById("map1-slider").max = min_slider;
                           
@@ -68,6 +72,9 @@
                                                     "#map1-play-button", "#map1-change-gradiant-button", 
                                                     "#map1-change-radius-button", "#map1-change-opacity-button", "#map1-slider",
                                                     "#speedSelection");
+                          
+                          GetHotelInfo();
+                          
                           },
                       error: function(xhr, status, error) {
                           alert(xhr.responseText);
@@ -76,8 +83,7 @@
             }
             
             google.maps.event.addDomListener(window, 'load', function(){
-                QueryDB("Chicago");
-                
+                QueryDB("Chicago");                
             });
         </script>        
     </head>
