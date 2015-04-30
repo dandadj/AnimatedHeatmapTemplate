@@ -1,5 +1,5 @@
 html, body, #map-canvas {
-    height: 800px;
+    height: 500px;
     width: 800px
 }
 
@@ -12,13 +12,13 @@ html, body, #map-canvas {
 }
 
 #button-panel {
-    top: 10px;
+    top: 8px;
     left: 175px;
     
 }
 
 #slider-panel {
-    top: 700px;
+    top: 450px;
     left: 300px;
 }
 

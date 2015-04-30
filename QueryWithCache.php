@@ -10,7 +10,7 @@
     $cached_file_name = "data/". $query. $CACHED_EXT;
 
     // Already cached, so read from file
-    if(file_exists($cached_file_name)){        
+    if(file_exists($cached_file_name)){
         $file = fopen($cached_file_name, 'r');
         $results = array();
         while (($line = fgetcsv($file)) !== FALSE) {
@@ -103,7 +103,8 @@
         }
         fclose($cache_file);
         
-        echo json_encode($json_response);
+        //echo json_encode($json_response);
+        echo json_encode($all_average_rows);
         $conn->close();
     }
     

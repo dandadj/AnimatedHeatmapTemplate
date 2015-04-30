@@ -12,10 +12,11 @@
         <script>
             
             function SearchForLocation(){                
-                var search_location = $("#SearchLocation")[0].value;
-                doAlert("testing alert");
+                var search_location = $("#SearchLocation")[0].value;                
                 QueryDB(search_location);
             }
+            
+            var all_hotel_infos = {};
             
             function GetHotelInfo(){
                 $.ajax({
@@ -23,8 +24,11 @@
                       type:'GET',
                       success: function (response) {
                           var hotel_infos = JSON.parse(response);
-                          
-                          
+                          for(var i = 0; i < hotel_infos.length; i++){
+                              var hotel_id = hotel_infos[i]["HotelID"];
+                              all_hotel_infos[hotel_id] = hotel_infos[i];
+                          }
+                          QueryDB("Chicago");
                       },
                       error: function(xhr, status, error) {
                           alert(xhr.responseText);
@@ -42,8 +46,11 @@
                           var quarters = $.map(points, function(p){return p["Date"]});
                           var unique_dates = $.unique(quarters);
                           
-                          var query_hotel_ids = $.map(points, function(p){return p["HotelID"]});
-                          var unique_hotel_ids = $.unique(query_hotel_ids);
+                          //var query_hotel_ids = $.map(points, function(p){return p["HotelID"]});
+                          //var unique_hotel_ids = $.unique(query_hotel_ids);
+                          
+                          var markers = [];
+                          var unique_hotels = {};
                           
                           var min_slider = unique_dates.length - 1;                          
                           document.getElementById("map1-slider").max = min_slider;
@@ -55,25 +62,36 @@
                               frame_labels.push(unique_dates[i]);
                               
                               var points_in_range = points.filter(function(row){
-                                  return row["Date"] == unique_dates[i];
+                                  return row["Date"] == unique_dates[i];                                  
                               });
                               
                               for(point of points_in_range){
+                                  var hotel_id = point["HotelID"];
+                                  var lat_lng = new google.maps.LatLng(point["latitude"], point["longitude"]);
+                                  var overall = point["Overall"];
+                                  if(!(hotel_id in unique_hotels)){
+                                      unique_hotels[hotel_id] = true;
+                                      var marker = new google.maps.Marker({position: lat_lng, HotelID: hotel_id, 
+                                           URL: all_hotel_infos[hotel_id]["URL"], Overall: overall,
+                                          Name: all_hotel_infos[hotel_id]["Name"], Price: all_hotel_infos[hotel_id]["Price"]});
+                                       
+                                      
+                                      markers.push(marker);
+                                  }                                  
+                                  
                                   var lat = point["latitude"];
                                   var lng = point["longitude"];
                                   if(isNaN(lat) || isNaN(lng)){continue;}
                                   var lat_lng = new google.maps.LatLng(lat, lng);
-                                  all_frames[i].push({location: lat_lng, weight: Number(point["Overall"])});                                  
+                                  all_frames[i].push({location: lat_lng, weight: Number(overall), HotelID: hotel_id});
                               }
                           }
                           
-                          $("#frameLabel").text(frame_labels[0]);
-                          InitializeAnimatedHeatmap(all_frames, frame_labels, 500, "#map-canvas", "#map1-loop-button", 
-                                                    "#map1-play-button", "#map1-change-gradiant-button", 
-                                                    "#map1-change-radius-button", "#map1-change-opacity-button", "#map1-slider",
-                                                    "#speedSelection");
+                          $("#frameLabel").text(frame_labels[0]);                          
                           
-                          GetHotelInfo();
+                          ChangeHeatmapData(all_frames, frame_labels);
+                          
+                          AddMarkers(markers);
                           
                           },
                       error: function(xhr, status, error) {
@@ -83,7 +101,13 @@
             }
             
             google.maps.event.addDomListener(window, 'load', function(){
-                QueryDB("Chicago");                
+                InitializeAnimatedHeatmap(500, "#map-canvas", "#map1-loop-button", 
+                                                    "#map1-play-button", "#map1-change-gradiant-button", 
+                                                    "#map1-change-radius-button", "#map1-change-opacity-button", "#map1-slider",
+                                                    "#speedSelection", "#map1-toggle-markers-button");
+                GetHotelInfo();
+                
+                
             });
         </script>        
     </head>
@@ -93,6 +117,7 @@
             <button id="map1-change-gradiant-button">Change gradient</button>
             <button id="map1-change-radius-button">Change radius</button>
             <button id="map1-change-opacity-button">Change opacity</button>
+            <button id="map1-toggle-markers-button">Toggle Markers</button>
             <br>
             Enter search location: <input type="text" id="SearchLocation" name="searchLocation" value="Chicago" onkeydown="if (event.keyCode == 13) document.getElementById('locationSearch').click()">
             <input id="locationSearch" type="submit" value="Search" onclick="SearchForLocation()">

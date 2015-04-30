@@ -9,10 +9,12 @@
         
         while (($line = fgetcsv($file)) !== FALSE) {
           //$line is an array of the csv elements
-            $results[] = array(array("HotelID"=>$line[0],
-                           "latitude"=>$line[1],
-                           "longitude"=>$line[2],
-                           "URL"=>$line[3]));                
+            $results[] = array("HotelID"=>$line[0],
+                           "Name"=>$line[1],
+                           "Price"=>$line[2],
+                           "latitude"=>$line[3],                               
+                           "longitude"=>$line[4],
+                           "URL"=>$line[5]);
         }
         fclose($file);        
     }
